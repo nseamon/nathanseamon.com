@@ -8,6 +8,7 @@ import './index.css';
 import App from './App';
 import Resume from './Components/Resume';
 import About from './Components/About';
+import HistoryList from './Components/CarServiceHistoryList'
 import * as serviceWorker from './serviceWorker';
 
 const routing = (
@@ -16,6 +17,7 @@ const routing = (
       <Route exact path="/" component={App} />
       <Route path="/resume" component={Resume} />
       <Route path="/about" component={About} />
+      <Route path="/car" component={HistoryList} />
     </div>
   </Router>
 )

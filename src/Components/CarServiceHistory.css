@@ -1,0 +1,17 @@
+.Entry-card {
+    padding: 20px;
+    border: "light";
+    align: "left";
+}
+
+.Entry-list {
+    padding: 20px;
+    align-items: center;
+}
+
+.form-input {
+    margin-bottom: 20px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    position: center;
+}

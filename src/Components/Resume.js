@@ -15,9 +15,7 @@ export default class Resume extends Component {
             <div class="heading"> 
               <h1><b>Résumé</b></h1>
             </div>
-            <Jumbotron>
-              <img src={Resume_v4} />
-            </Jumbotron>
+              <img src={Resume_v4}/>
           </div>
         </Jumbotron>
       </div>

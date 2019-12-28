@@ -7,7 +7,7 @@ function App() {
  
   return (
   
-   <div className="App">
+    <div className="App">
       <CustomNavbar></CustomNavbar>
       <div className="Car-background">
         <div className="App-Body">
