@@ -1,15 +1,15 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
-import $ from 'jquery';
-import Popper from 'popper.js';
-import { Route, Link, BrowserRouter as Router } from 'react-router-dom'
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { BrowserRouter as Router, Route} from 'react-router-dom'
+import 'bootstrap/dist/css/bootstrap.min.css'
+
 import './index.css';
 import App from './App';
-import Resume from './Components/Resume';
-import About from './Components/About';
-import HistoryList from './Components/CarServiceHistoryList'
-import * as serviceWorker from './serviceWorker';
+import Resume from './Components/Resume'
+import About from './Components/About'
+import ServiceHistoryDashboard from './Components/CarServiceHistoryDashboard.js'
+import CreateAccount from './Components/CreateAccount.js'
+import * as serviceWorker from './serviceWorker'
 
 const routing = (
   <Router>
@@ -17,7 +17,8 @@ const routing = (
       <Route exact path="/" component={App} />
       <Route path="/resume" component={Resume} />
       <Route path="/about" component={About} />
-      <Route path="/car" component={HistoryList} />
+      <Route path="/car" component={ServiceHistoryDashboard} />
+      <Route path="/createAccount" component={CreateAccount} />
     </div>
   </Router>
 )

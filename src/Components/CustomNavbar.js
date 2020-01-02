@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
-import { Navbar, Nav } from "react-bootstrap";
-import './Navbar.css';
+import { Navbar, Nav } from "react-bootstrap"
+import '../App.css'
 
 export default class CustomNav extends Component {
 
@@ -8,7 +8,7 @@ export default class CustomNav extends Component {
     return (
       <div class="navbar-brand">
         <nav class="fixed-top">
-          <Navbar class="navbar-brand" bg="dark" variant="dark" >
+          <Navbar class="Navbar-style" bg="dark" variant="dark" >
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
               <Nav> 
@@ -21,7 +21,7 @@ export default class CustomNav extends Component {
                 <Nav.Item>
                   <Nav.Link href="/resume">Resume</Nav.Link>
                 </Nav.Item>
-                <Nav.Item>
+                <Nav.Item >
                   <Nav.Link href="/car">Car Service</Nav.Link>
                 </Nav.Item>
               </Nav>

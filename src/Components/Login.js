@@ -1,10 +1,13 @@
 import React, {Component} from 'react'
-import Jumbotron from 'react-bootstrap/Jumbotron'
+import {Jumbotron, Button} from 'react-bootstrap'
+
+import axios from 'axios'
+
 import CustomNavbar from './CustomNavbar.js'
-import Button from 'react-bootstrap/Button'
-import './CarServiceHistory.css'
+import '../App.css'
 
 
+const CarServiceAPIHost = "http://127.0.0.1:5000/"
 
 export default class Login extends Component {
 
@@ -21,10 +24,30 @@ export default class Login extends Component {
   }
 
   handleSubmit = () => {
-    //todo
+    axios.post((CarServiceAPIHost + "login"), {
+      'username' : this.state.username,
+      'password' : this.state.password
+    }).then((response) => {
+        if (response.status === 200){
+          localStorage.setItem('token', response.data['token']);
+          localStorage.setItem('username', this.state.username);
+          window.location.reload(true);
+          return
+        }
+    }).catch((error) => {
+      if (error.response.status === 401){
+        alert("Invalid password");
+        window.location.reload(true);
+      } 
+      
+      if (error.response.status === 404){
+        alert("Invalid username");
+        window.location.reload(true);
+      }
+    });
   }
 
-  handleUsernameChange = (e) =>{
+  handleUsernameChange = (e) => {
     this.setState({ username: e.target.value });
   }
 
@@ -37,6 +60,8 @@ export default class Login extends Component {
       <div>
         <CustomNavbar></CustomNavbar>
         <Jumbotron style={{ width: '40vw'}}>
+          <h1><b>Login</b></h1>
+          <div className="add-space-top">
           <div className="form-input">
             <div>
               <label><b>Username</b></label>
@@ -50,13 +75,22 @@ export default class Login extends Component {
               <label><b>Password</b></label>
             </div>
             <div>
-              <input style={{width: "20vw"}} value={this.state.password} onChange={this.handlePasswordChange}/>
+              <input style={{width: "20vw"}} type="password" value={this.state.password} onChange={this.handlePasswordChange}/>
             </div>
           </div>
           <div className="form-input">
-            <Button variant="dark" onClick={this.handleSubmit}>Submit</Button>
+            <Button variant="dark" onClick={()=> {this.handleSubmit()}} disabled={this.state.password === "" || this.state.username === ""}>Submit</Button>
+          </div>
           </div>
         </Jumbotron>
+        <div>
+          <div>
+            Don't have an account yet?
+          </div>
+          <div>
+            <Button variant="dark" href="/createAccount">Create an account</Button>
+          </div>
+        </div>
       </div>
     );
   }

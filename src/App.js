@@ -2,8 +2,7 @@ import React from 'react';
 import './App.css';
 import CustomNavbar from './Components/CustomNavbar.js'
 
-
-function App() {
+export default function App() {
  
   return (
   
@@ -17,7 +16,3 @@ function App() {
     </div>
   );
 }
-
-
-
-export default App;
