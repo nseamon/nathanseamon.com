@@ -11,7 +11,7 @@ import '../App.css'
 import delete_icon from '../icons/delete_icon.png' 
 
 
-const CarServiceAPIHost = "http://127.0.0.1:5000/"
+const CarServiceAPIHost = process.env.REACT_APP_CAR_SERVICE_HISTORY_APP
 
 export default class ServiceHistoryDashboard extends Component {
  
@@ -33,10 +33,10 @@ export default class ServiceHistoryDashboard extends Component {
     this.handleNewEntry = this.handleNewEntry.bind(this);
     this.handleNewCar = this.handleNewCar.bind(this);
     this.deleteCar = this.deleteCar.bind(this);
+    this.deleteEntry= this.deleteEntry.bind(this);
   }
  
   componentDidMount() {
-    
     this.setState({"selected": false});
 
     if (localStorage.getItem('token')) {
@@ -54,11 +54,41 @@ export default class ServiceHistoryDashboard extends Component {
     }
   };
 
+  deleteEntry = (id) => {
+    axios.defaults.headers.Authorization = 'Bearer ' + localStorage.getItem('token');
+    axios.delete((CarServiceAPIHost + "service?id=" + id)
+    ).then((response) => {
+      const ents = this.state.entries.filter(entry => entry.record_id !== id);
+      this.setState({ entries: ents });
+    }).catch((error) => {
+      if (error && error.response && error.response.status === 401) {
+          localStorage.clear();
+          window.location.reload(true);
+      } else {
+        alert("There was an error deleting your entry");
+      }
+    });
+  }
+
+  updateEntries = (id) => {
+    axios.get((CarServiceAPIHost + "service?id=" + id)).then((response) => {
+      this.setState({ 'entries': response.data});
+    }).catch((error) => {
+      if (error && error.response && error.response.status === 401) {
+          localStorage.clear();
+          window.location.reload(true);
+      } else {
+        alert("There was an error getting your service records");
+      }
+    });
+  }
+
   deleteCar = (id) => {
     axios.defaults.headers.Authorization = 'Bearer ' + localStorage.getItem('token');
     axios.delete((CarServiceAPIHost + "cars?id=" + id)
     ).then((response) => {
-      window.location.reload(true);
+      const cars = this.state.myCars.filter(car => car.id !== id);
+      this.setState({ myCars: cars });
     }).catch((error) => {
       if (error && error.response && error.response.status === 401) {
           localStorage.clear();
@@ -78,6 +108,7 @@ export default class ServiceHistoryDashboard extends Component {
     this.setState({
       entries: this.state.entries.concat(ent),
     });
+    this.updateEntries(this.state.id);
   }
 
   handleNewCar = (car) => {
@@ -108,12 +139,15 @@ export default class ServiceHistoryDashboard extends Component {
 
   render() {
     if (localStorage.getItem('token')) {
-      const historyEntries = this.state.entries.map((entry) => (
+      const historyEntries = this.state.entries.sort((a, b) => 
+       (a.mileage < b.mileage) ? 1 : -1).map((entry) => (
         <Entry
           car_id={entry.car_id}
           service={entry.service}
           mileage={entry.mileage}
           date={entry.date}
+          entry_id={entry.record_id}
+          delete={this.deleteEntry}
         />
       ));
 
@@ -174,8 +208,8 @@ export default class ServiceHistoryDashboard extends Component {
             <Container fluid={true}>
               <Row>
                 <Col>
-                  <div>
-                    <h3><b>Your Cars</b></h3>
+                  <div class="add-space-top">
+                    <h2><b>Your Cars</b></h2>
                   </div>
                   <div class="add-space-top">
                     <div id='entries' class='Entry-list'>
@@ -219,6 +253,12 @@ export default class ServiceHistoryDashboard extends Component {
 
 class Entry extends Component {
 
+  delete = () => {
+    if(window.confirm("Are you sure you want to delete this entry?" )){
+      this.props.delete(this.props.entry_id);
+    }
+  };
+
   render() {
     return (
       <ul>
@@ -233,6 +273,12 @@ class Entry extends Component {
               <Card.Text padding-left="15px">
                 {this.props.service}
               </Card.Text>
+              <div align="right">
+                <Button variant="danger" style={{"padding": "0px", "border": "0px"}} 
+                        onClick={() => {this.delete()}}>
+                    <img src={delete_icon} alt="delete" width="32" height="38"/>
+                </Button>
+              </div>
           </Card.Body>
         </Card>
       </ul>
@@ -243,9 +289,6 @@ class Entry extends Component {
 
 class Car extends Component {
   
-  componentDidMount() {
-  }
-
   select = () => {
     this.props.thisOnSelect(this.props);
   }
@@ -268,12 +311,12 @@ class Car extends Component {
               <Card.Title>
                 {this.props.make}  {this.props.model} {this.props.trim}
               </Card.Title>
-            <div align="center">
+            <div align="right">
               <div>
                 <Button variant="dark" onClick={() => {this.select()}}>Select</Button>
                 <div class="divider"/>
                 <Button variant="danger" style={{"padding": "0px", "border": "0px"}} onClick={() => {this.delete()}}>
-                  <img src={delete_icon} alt="delete" width="23" height="27"/>
+                  <img src={delete_icon} alt="delete" width="32" height="38"/>
                 </Button>
               </div>
             </div>    

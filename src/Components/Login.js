@@ -7,7 +7,7 @@ import CustomNavbar from './CustomNavbar.js'
 import '../App.css'
 
 
-const CarServiceAPIHost = "http://127.0.0.1:5000/"
+const CarServiceAPIHost = process.env.REACT_APP_CAR_SERVICE_HISTORY_APP
 
 export default class Login extends Component {
 

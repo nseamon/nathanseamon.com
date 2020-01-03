@@ -17,7 +17,7 @@ const routing = (
       <Route exact path="/" component={App} />
       <Route path="/resume" component={Resume} />
       <Route path="/about" component={About} />
-      <Route path="/car" component={ServiceHistoryDashboard} />
+      <Route path="/serviceDashboard" component={ServiceHistoryDashboard} />
       <Route path="/createAccount" component={CreateAccount} />
     </div>
   </Router>

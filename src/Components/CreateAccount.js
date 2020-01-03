@@ -7,7 +7,7 @@ import CustomNavbar from './CustomNavbar.js'
 import '../App.css'
 
 
-const CarServiceAPIHost = "http://127.0.0.1:5000/"
+const CarServiceAPIHost = process.env.REACT_APP_CAR_SERVICE_HISTORY_APP
 
 export default class CreateAccount extends Component {
 
@@ -79,7 +79,7 @@ export default class CreateAccount extends Component {
   }
 
   returnToLogin = () => {
-    window.location.replace("http://localhost:3000/car");
+    window.location.replace("http://localhost:3000/serviceDashboard");
   }
 
   handleCreateAccount = () => {
@@ -92,7 +92,7 @@ export default class CreateAccount extends Component {
 
       }).then(function (response) {
         alert("Account created successfully");
-        window.location.replace("http://localhost:3000/car");
+        window.location.replace("http://localhost:3000/serviceDashboard");
       }).catch(function (error) {
         if (error.response.status === 401){
           alert("Username already used, pick another");

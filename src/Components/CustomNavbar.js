@@ -22,7 +22,7 @@ export default class CustomNav extends Component {
                   <Nav.Link href="/resume">Resume</Nav.Link>
                 </Nav.Item>
                 <Nav.Item >
-                  <Nav.Link href="/car">Car Service</Nav.Link>
+                  <Nav.Link href="/serviceDashboard">Car Service History Service</Nav.Link>
                 </Nav.Item>
               </Nav>
             </Navbar.Collapse>

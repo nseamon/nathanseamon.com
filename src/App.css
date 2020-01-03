@@ -17,14 +17,6 @@
   color: rgb(44, 117, 253);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
 
 .Car-background {
   background-position: center center;

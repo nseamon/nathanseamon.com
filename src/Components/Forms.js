@@ -6,7 +6,7 @@ import axios from 'axios'
 import '../App.css'
 
 
-const CarServiceAPIHost = "http://127.0.0.1:5000/"
+const CarServiceAPIHost = process.env.REACT_APP_CAR_SERVICE_HISTORY_APP
 
 export class AddCarForm extends Component {
   
@@ -64,7 +64,7 @@ export class AddCarForm extends Component {
     const validYearRegex1 = RegExp(/^[1][9][0-9]{2}$/);
     const validYearRegex2 = RegExp(/^[2]0[0-9]{2}$/);
     if(isNaN(e.target.value)){
-      e.target.value = "";
+      e.target.value = this.state.year;
     } else if (!(validYearRegex1.test(e.target.value) || validYearRegex2.test(e.target.value))) {
       this.setState({"yearError": "Out of range"});
     } else {
@@ -183,7 +183,7 @@ export class AddEntryForm extends Component {
 
   handleMileageChange = (e) => { 
     if(isNaN(e.target.value) || e.target.value < 0 ){
-      e.target.value = "";
+      e.target.value = this.state.mileage;
     } else {
       this.setState({'mileage': e.target.value});
     }
