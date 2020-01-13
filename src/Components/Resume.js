@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import Jumbotron from 'react-bootstrap/Jumbotron'
 
 import CustomNavbar from './CustomNavbar.js'
-import Resume_v4 from '../images/Resume.png'
+import Resume_v4 from '../images/Resume_v4.2.png'
 import '../App.css'
 
 export default class Resume extends Component {

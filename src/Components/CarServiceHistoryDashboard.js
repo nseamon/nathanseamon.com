@@ -20,11 +20,6 @@ export default class ServiceHistoryDashboard extends Component {
     this.state = {
       entries: [],
       myCars: [],
-      make: "",
-      model: "",
-      trim: "",
-      year: "",
-      id: "",
       selected: null
     };
 
@@ -117,6 +112,7 @@ export default class ServiceHistoryDashboard extends Component {
 
   thisOnSelect = (car) => {
     this.setState({"selected": true});
+    this.setState({"entries": []});
 
     axios.defaults.headers.Authorization = 'Bearer ' + localStorage.getItem('token');
     this.setState({"make": car.make});
@@ -126,7 +122,7 @@ export default class ServiceHistoryDashboard extends Component {
     this.setState({"id": car.id});
 
     axios.get((CarServiceAPIHost + "service?id=" + car.id)).then((response) => {
-      this.setState({ 'entries': response.data});
+      this.setState({ "entries": response.data});
     }).catch((error) => {
       if (error && error.response && error.response.status === 401) {
           localStorage.clear();
@@ -148,9 +144,10 @@ export default class ServiceHistoryDashboard extends Component {
           date={entry.date}
           entry_id={entry.record_id}
           delete={this.deleteEntry}
+          updateEntries={this.updateEntries}
         />
       ));
-
+      
       const garageEntries = this.state.myCars.map((entry) => (
         <Car
           id={entry.id}
@@ -251,7 +248,21 @@ export default class ServiceHistoryDashboard extends Component {
   };
 }
 
+
 class Entry extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      dateError: '',
+      edit: false
+    };
+  }
+
+  componentDidMount = () => {
+    this.setState({'mileage': this.props.mileage, 'date': this.props.date, 'service': this.props.service});
+    this.setState({'originalMileage': this.props.mileage, 'originalDate': this.props.date, 'originalService': this.props.service});
+  };
 
   delete = () => {
     if(window.confirm("Are you sure you want to delete this entry?" )){
@@ -259,36 +270,142 @@ class Entry extends Component {
     }
   };
 
+  editToggle = (clear=true) => {
+    var edit = !this.state.edit;
+    this.setState({'edit': edit});
+    if (clear){
+      this.reset();
+    }
+  };
+
+  changeOriginals = () => {
+    this.setState({'originalMileage': this.state.mileage, 'originalDate': this.state.date,
+    'originalService': this.state.service});
+  };
+
+  reset = () => {
+    this.setState({'mileage': this.state.originalMileage, 'date': this.state.originalDate,
+    'service': this.state.originalService});
+  };
+
+  isDisabled = () => {
+    if (this.state.mileage === "" || this.state.date === ""|| this.state.service === "" 
+       || this.state.dateError !== "") {
+      return true;
+    } 
+    if (this.state.originalMileage === parseInt(this.state.mileage) && this.state.originalDate === this.state.date
+       && this.state.originalService === this.state.service) {
+        return true;
+    } 
+
+    return false;
+  };
+
+  handleDateChange = (e) => {
+    const validDate = RegExp(/(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])-(19|20)\d\d$/);
+    if (validDate.test(e.target.value)){
+      this.setState({'date': e.target.value});
+      this.setState({'dateError': ""});
+    } else {
+      this.setState({'date': e.target.value});
+      this.setState({'dateError': "Date must be in format MM-DD-YYYY"});
+    }
+  };
+
+  handleServiceChange = (e) => {
+    this.setState({'service': e.target.value});
+  };
+
+  handleMileageChange = (e) => {
+    if(isNaN(e.target.value) || e.target.value < 0 ){
+      e.target.value = this.state.mileage;
+    } else {
+      this.setState({'mileage': e.target.value});
+    }
+  };
+  
+  submit = () => {
+    localStorage.getItem('token')
+    axios.defaults.headers.Authorization = 'Bearer ' + localStorage.getItem('token');
+    axios.put((CarServiceAPIHost + "service"), {
+      'id': this.props.entry_id,
+      'date': this.state.date,
+      'mileage': this.state.mileage,
+      'service': this.state.service
+      
+      }).then((response) => {
+        this.setState({"edit": false});
+        this.changeOriginals();
+      }).catch((error) => {
+        if (error && error.response && error.response.status === 401) {
+          localStorage.clear();
+          window.location.reload(true);
+        } else {
+          alert("Your request was invalid");
+        }
+      }
+    );
+  }
+
   render() {
-    return (
-      <ul>
-        <Card style={{ width: '30vw'}}  align="left">
+    if (this.state.edit) {
+      return (
+        <ul>
+          <Card style={{ width: '40vw'}}  align="left" border="primary">
             <Card.Header>
-              {this.props.date}
+              Edit Date:<br/> <input style={{width: "15vw"}} value={this.state.date} onChange={this.handleDateChange}/>
+                <div><font color="red">{this.state.dateError}</font></div>
             </Card.Header> 
             <Card.Body padding-left="0px">    
-              <Card.Title>
-                {this.props.mileage} miles
-              </Card.Title>
               <Card.Text padding-left="15px">
-                {this.props.service}
+                Edit Mileage: <br/><input style={{width: "15vw"}} value={this.state.mileage} onChange={this.handleMileageChange}/> 
+              </Card.Text>
+              <Card.Text>
+                Edit Service: <br/><textarea style={{width: "20vw", height: "15vh"}} value={this.state.service}
+                 onChange={this.handleServiceChange}/>
               </Card.Text>
               <div align="right">
-                <Button variant="danger" style={{"padding": "0px", "border": "0px"}} 
-                        onClick={() => {this.delete()}}>
-                    <img src={delete_icon} alt="delete" width="32" height="38"/>
-                </Button>
+              <Button variant="dark"  onClick={() => {this.submit()}} disabled={this.isDisabled()}>Save</Button>
+                  <div class="divider"/>
+                <Button variant="dark" onClick={() => {this.editToggle()}}>Cancel</Button>
               </div>
-          </Card.Body>
-        </Card>
-      </ul>
-    )
+            </Card.Body>
+          </Card>
+        </ul>
+      )
+    } else {
+      return (
+        <ul>
+          <Card style={{ width: '40vw'}}  align="left">
+              <Card.Header>
+                {this.state.date}
+              </Card.Header> 
+              <Card.Body padding-left="0px">    
+                <Card.Title>
+                  {this.state.mileage} miles
+                </Card.Title>
+                <Card.Text padding-left="15px">
+                  {this.state.service}
+                </Card.Text>
+                <div align="right">
+                  <Button variant="dark" onClick={(clear=false) => {this.editToggle()}}>Edit</Button>
+                  <div class="divider"/>
+                  <Button variant="danger" style={{"padding": "0px", "border": "0px"}} 
+                          onClick={() => {this.delete()}}>
+                      <img src={delete_icon} alt="delete" width="32" height="38"/>
+                  </Button>
+                </div>
+            </Card.Body>
+          </Card>
+        </ul>
+      )
+    }
   };
 }
 
 
 class Car extends Component {
-  
+
   select = () => {
     this.props.thisOnSelect(this.props);
   }
