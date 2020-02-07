@@ -270,12 +270,10 @@ class Entry extends Component {
     }
   };
 
-  editToggle = (clear=true) => {
+  editToggle = (clear=false) => {
     var edit = !this.state.edit;
     this.setState({'edit': edit});
-    if (clear){
-      this.reset();
-    }
+    this.reset();
   };
 
   changeOriginals = () => {
@@ -293,7 +291,7 @@ class Entry extends Component {
        || this.state.dateError !== "") {
       return true;
     } 
-    if (this.state.originalMileage === parseInt(this.state.mileage) && this.state.originalDate === this.state.date
+    if (this.state.originalMileage === this.state.mileage && this.state.originalDate === this.state.date
        && this.state.originalService === this.state.service) {
         return true;
     } 

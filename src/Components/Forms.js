@@ -13,10 +13,6 @@ export class AddCarForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      make: "",
-      model: "",
-      trim: "",
-      year: "",
       yearError: ""
     };
   }
