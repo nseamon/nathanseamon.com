@@ -79,7 +79,7 @@ export default class CreateAccount extends Component {
   }
 
   returnToLogin = () => {
-    window.location.replace("http://localhost:3000/serviceDashboard");
+    window.location.replace("/serviceDashboard");
   }
 
   handleCreateAccount = () => {
@@ -92,7 +92,7 @@ export default class CreateAccount extends Component {
 
       }).then(function (response) {
         alert("Account created successfully");
-        window.location.replace("http://localhost:3000/serviceDashboard");
+        window.location.replace("/serviceDashboard");
       }).catch(function (error) {
         if (error.response.status === 401){
           alert("Username already used, pick another");

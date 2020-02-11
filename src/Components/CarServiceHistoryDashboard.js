@@ -53,8 +53,9 @@ export default class ServiceHistoryDashboard extends Component {
     axios.defaults.headers.Authorization = 'Bearer ' + localStorage.getItem('token');
     axios.delete((CarServiceAPIHost + "service?id=" + id)
     ).then((response) => {
-      const ents = this.state.entries.filter(entry => entry.record_id !== id);
-      this.setState({ entries: ents });
+      const newEntries = this.state.entries.filter(entry => entry.record_id !== id);
+      this.setState({ "entries": []});
+      this.setState({ "entries": newEntries});
     }).catch((error) => {
       if (error && error.response && error.response.status === 401) {
           localStorage.clear();
@@ -67,6 +68,7 @@ export default class ServiceHistoryDashboard extends Component {
 
   updateEntries = (id) => {
     axios.get((CarServiceAPIHost + "service?id=" + id)).then((response) => {
+      this.setState({ 'entries': []});
       this.setState({ 'entries': response.data});
     }).catch((error) => {
       if (error && error.response && error.response.status === 401) {
@@ -84,6 +86,9 @@ export default class ServiceHistoryDashboard extends Component {
     ).then((response) => {
       const cars = this.state.myCars.filter(car => car.id !== id);
       this.setState({ myCars: cars });
+      if ( id === this.state.id) {
+        this.resetSelected();
+      }
     }).catch((error) => {
       if (error && error.response && error.response.status === 401) {
           localStorage.clear();
@@ -100,9 +105,6 @@ export default class ServiceHistoryDashboard extends Component {
   }
 
   handleNewEntry = (ent) => {
-    this.setState({
-      entries: this.state.entries.concat(ent),
-    });
     this.updateEntries(this.state.id);
   }
 
@@ -110,6 +112,15 @@ export default class ServiceHistoryDashboard extends Component {
     window.location.reload(true);
   }
 
+  resetSelected = () => {
+    this.setState({"selected": false});
+    this.setState({"entries": []});
+    this.setState({"make": ""});
+    this.setState({"model": ""});
+    this.setState({"trim": ""});
+    this.setState({"year": ""});
+    this.setState({"id": ""});
+  }
   thisOnSelect = (car) => {
     this.setState({"selected": true});
     this.setState({"entries": []});
@@ -121,22 +132,14 @@ export default class ServiceHistoryDashboard extends Component {
     this.setState({"year": car.year});
     this.setState({"id": car.id});
 
-    axios.get((CarServiceAPIHost + "service?id=" + car.id)).then((response) => {
-      this.setState({ "entries": response.data});
-    }).catch((error) => {
-      if (error && error.response && error.response.status === 401) {
-          localStorage.clear();
-          window.location.reload(true);
-      } else {
-        alert("There was an error getting your service records");
-      }
-    });
+    this.updateEntries(car.id);
   }
 
   render() {
     if (localStorage.getItem('token')) {
-      const historyEntries = this.state.entries.sort((a, b) => 
-       (a.mileage < b.mileage) ? 1 : -1).map((entry) => (
+      const historyEntries = this.state.entries
+        .sort((a, b) => (b.mileage - a.mileage))
+        .map((entry) => (
         <Entry
           car_id={entry.car_id}
           service={entry.service}
@@ -291,7 +294,7 @@ class Entry extends Component {
        || this.state.dateError !== "") {
       return true;
     } 
-    if (this.state.originalMileage === this.state.mileage && this.state.originalDate === this.state.date
+    if (this.state.originalMileage === parseInt(this.state.mileage) && this.state.originalDate === this.state.date
        && this.state.originalService === this.state.service) {
         return true;
     } 

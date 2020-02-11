@@ -13,12 +13,15 @@ export class AddCarForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      yearError: ""
+      yearError: "",
+      make: "",
+      model: "",
+      year: ""
     };
   }
   
   isDisabled = () => {
-    if (this.state.make === "" || this.state.model === ""|| this.state.year === "" || this.state.yearError !== "") {
+    if (this.state.make === "" || this.state.model === "" || this.state.year === "" || this.state.yearError !== "") {
       return true;
     } 
     return false;
@@ -150,7 +153,7 @@ export class AddEntryForm extends Component {
       'mileage': this.state.mileage,
       'service': this.state.service,
       'date': this.state.date,
-      'id': this.props.id,
+      'id': this.props.id
 
       }).then((response) => {
         this.props.handleNewEntry({'mileage': this.state.mileage, 'service': this.state.service,
